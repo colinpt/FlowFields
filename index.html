@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/css?family=Raleway:600" rel="stylesheet">
+</head>
+
+<body>
+  <h1>Flow Fields</h1>
+  <div style="position:relative;">
+    <script src="sketch.js"></script>
+    <script src="weather.js"></script>
+
+    <form class="ui form">
+      <div class="field" style="position:absolute;left:30px;top:100px; width:125px;">
+        <div class="ui labeled input">
+          <div class="ui label tooltip" style="width: 75px;">
+            <div class="activate">Location</div>
+            <span class="tooltiptext">This will let a Weather API seed the generation of the image</span>
+          </div>
+          <input type="text" placeholder="Zipcode or City" value="Ithaca" id="query">
+        </div>
+      </div>
+  </div>
+  </form>
+  <button class="ui centered large blue button" style="position:absolute;left:30px;top:150px; width: 200px;"
+    onclick="generate()">
+    Generate
+  </button>
+  <button class="ui centered large green button" style="position:absolute;left:30px;top:200px; width: 200px;"
+    onclick="saveCanvas()">
+    Save
+  </button>
+  <button class="ui centered large teal button" style="position:absolute;left:30px;top:250px; width: 200px;"
+    onclick="toggleSettingsTable()">
+    Toggle Settings.
+  </button>
+  <div id="settings" class="ui form" style="display: none;">
+
+    <table class="ui collapsing compact table" style="position:absolute;left:30px;top:300px;">
+      <thead>
+        <tr>
+          <th>
+            Weather Metric
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="These are the metrics being pulled from the weather API that affect the output image.">
+              </i>
+            </div>
+          </th>
+          <th>
+            Setting
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="These are the settings that change based on their respective weather metrics.">
+              </i>
+            </div>
+          </th>
+          <th>
+            Weather Metric Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            Temp (f)
+          </td>
+          <td>
+            Color
+          </td>
+          <td>
+            <input type="number" id="wTemp">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <a href="https://www.weatherapi.com/docs/weather_conditions.json" class="activate">Condition</a>
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="The current condition, as defined by the linked JSON file.">
+              </i>
+            </div>
+          </td>
+          <td>
+            Number of Sections
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="The number of distinct sections where the flow field experiences slightly different behavior.">
+              </i>
+            </div>
+          </td>
+          <td>
+            <input type="number" id="wCondition">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            Precipitation (mm)
+          </td>
+          <td>
+            Line Length & Density
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="More rain means more lines and shorter lines">
+              </i>
+            </div>
+          </td>
+          <td>
+            <input type="number" id="wPrecipitation">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            Wind Direction (degrees)
+          </td>
+          <td>
+            Base Angle of Flow
+          </td>
+          <td>
+            <input type="number" id="wWindDirection">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            Cloud Cover (%)
+          </td>
+          <td>
+            Scale
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="Changes how large each section is. The higher the cloud cover, the smaller the sections.">
+              </i>
+            </div>
+          </td>
+          <td>
+            <input type="number" id="wCloudCover">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            Wind Speed (kph)
+          </td>
+          <td>
+            Turbulence
+          </td>
+          <td>
+            <input type="number" id="wWindSpeed">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            Time (hr, 24)
+          </td>
+          <td>
+            Brightness
+          </td>
+          <td>
+            <input type="number" id="wTime">
+          </td>
+        </tr>
+      <tfoot>
+        <tr>
+
+          <th>
+            Show Sections
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="Renders the sections, rather than the flow field">
+              </i>
+            </div>
+            <div class="ui toggle checkbox">
+              <input type="checkbox" id="showSections" tabindex="0" class="hidden">
+            </div>
+          </th>
+
+          <th>
+           
+          </th>
+          <th>
+            Overide Settings
+            <div class="ui tooltip" style="width: 75px;">
+              <i class="activate question circle outline icon"
+                data-content="Allows for manual input">
+              </i>
+            </div>
+            <div class="ui toggle checkbox">
+              <input type="checkbox" id="override" tabindex="0" class="hidden">
+            </div>
+          </th>
+        </tr>
+      </tfoot>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    $('.ui.checkbox')
+      .checkbox();
+
+    $('.activate.question.circle.outline.icon')
+      .popup();
+  </script>
+  </div>
+</body>
+
+</html>
