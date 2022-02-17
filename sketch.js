@@ -29,7 +29,7 @@ async function generate(){
   else
   {
     previousQuery = query
-    weatherResponse = await fetch(`http://api.weatherapi.com/v1/current.json?key=a37179c22caf458aa10220836220102&q=${query}`, fetchOptions)
+    weatherResponse = await fetch(`https://api.weatherapi.com/v1/current.json?key=a37179c22caf458aa10220836220102&q=${query}`, fetchOptions)
     weatherJSON = await weatherResponse.json();
     settings = populateSettingsViaWeather(weatherJSON);
     console.log(weatherJSON);
