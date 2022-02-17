@@ -52,7 +52,7 @@ async function generate(){
   }
   loop(); 
 
-
+  return false;
 }
 
 function draw() {
